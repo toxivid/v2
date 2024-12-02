@@ -1,3 +1,7 @@
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+-- GUI creation
 local ScreenGui = Instance.new("ScreenGui")
 local main = Instance.new("Frame")
 local tabFrame = Instance.new("Frame")
@@ -8,41 +12,48 @@ local ExtrasTab = Instance.new("TextButton")
 local contentFrame = Instance.new("Frame")
 local contentLabel = Instance.new("TextLabel")
 
--- Player Toggles & Input Fields
+-- Player Features Content
 local playerFrame = Instance.new("Frame")
-local infiniteJumpToggle = Instance.new("TextButton")
 local noclipToggle = Instance.new("TextButton")
 local flyingToggle = Instance.new("TextButton")
-local speedToggle = Instance.new("TextButton")
-
--- Input fields for player features
-local flyingSpeedInput = Instance.new("TextBox")
+local infJumpToggle = Instance.new("TextButton")
 local speedInput = Instance.new("TextBox")
-local infiniteJumpInput = Instance.new("TextBox")
-local noclipInput = Instance.new("TextBox")
 
--- Properties:
+-- Visuals Content
+local visualsFrame = Instance.new("Frame")
+local boxesToggle = Instance.new("TextButton")
+local healthToggle = Instance.new("TextButton")
+local nameToggle = Instance.new("TextButton")
+local skeletonToggle = Instance.new("TextButton")
 
+-- Aimbot Content
+local aimbotFrame = Instance.new("Frame")
+local aimbotToggle = Instance.new("TextButton")
+
+-- Noclip Script Variables
+local Noclipping = nil
+local Clip = false
+
+-- GUI Properties (Same as before)
 ScreenGui.Parent = game.CoreGui
-
 main.Name = "main"
 main.Parent = ScreenGui
 main.Active = true
-main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  -- Dark background
+main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 main.BorderSizePixel = 0
-main.Position = UDim2.new(0.1, 0, 0.1, 0)  -- Position it a bit away from the screen edges
-main.Size = UDim2.new(0, 500, 0, 300)  -- Larger window
+main.Position = UDim2.new(0.1, 0, 0.1, 0)
+main.Size = UDim2.new(0, 500, 0, 300)
 main.Active = true
-main.Draggable = true
+main.Draggable = false
 
--- Tab Frame
+-- Tab Frame Properties
 tabFrame.Parent = main
-tabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Darker background for tabs
+tabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 tabFrame.BorderSizePixel = 0
 tabFrame.Position = UDim2.new(0, 0, 0, 0)
-tabFrame.Size = UDim2.new(1, 0, 0, 30)  -- Tabs at the top
+tabFrame.Size = UDim2.new(1, 0, 0, 30)
 
--- Left Paimbot Tab
+-- Tab Buttons (same as before)
 LeftPaimbotTab.Name = "LeftPaimbotTab"
 LeftPaimbotTab.Parent = tabFrame
 LeftPaimbotTab.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
@@ -50,11 +61,10 @@ LeftPaimbotTab.BorderSizePixel = 0
 LeftPaimbotTab.Position = UDim2.new(0, 0, 0, 0)
 LeftPaimbotTab.Size = UDim2.new(0.25, 0, 1, 0)
 LeftPaimbotTab.Font = Enum.Font.SourceSans
-LeftPaimbotTab.Text = "Left Paimbot"
+LeftPaimbotTab.Text = "Aimbot"
 LeftPaimbotTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 LeftPaimbotTab.TextSize = 18
 
--- Player Tab
 PlayerTab.Name = "PlayerTab"
 PlayerTab.Parent = tabFrame
 PlayerTab.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
@@ -66,7 +76,6 @@ PlayerTab.Text = "Player"
 PlayerTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlayerTab.TextSize = 18
 
--- Visuals Tab
 VisualsTab.Name = "VisualsTab"
 VisualsTab.Parent = tabFrame
 VisualsTab.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
@@ -78,7 +87,6 @@ VisualsTab.Text = "Visuals"
 VisualsTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 VisualsTab.TextSize = 18
 
--- Extras Tab
 ExtrasTab.Name = "ExtrasTab"
 ExtrasTab.Parent = tabFrame
 ExtrasTab.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
@@ -90,129 +98,161 @@ ExtrasTab.Text = "Extras"
 ExtrasTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 ExtrasTab.TextSize = 18
 
--- Content Frame
+-- Content Frame (for the active tab)
 contentFrame.Parent = main
 contentFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 contentFrame.BorderSizePixel = 0
-contentFrame.Position = UDim2.new(0, 0, 0, 30)  -- Below the tabs
-contentFrame.Size = UDim2.new(1, 0, 1, -30)  -- Fill the remaining space
+contentFrame.Position = UDim2.new(0, 0, 0, 30)
+contentFrame.Size = UDim2.new(1, 0, 1, -30)
 
--- Content Label (for random text)
+-- Content Label (initial message)
 contentLabel.Parent = contentFrame
 contentLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 contentLabel.BorderSizePixel = 0
-contentLabel.Size = UDim2.new(1, 0, 1, 0)  -- Fill the content area
+contentLabel.Size = UDim2.new(1, 0, 1, 0)
 contentLabel.Font = Enum.Font.SourceSans
 contentLabel.Text = "Click a tab to see content!"
 contentLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 contentLabel.TextSize = 18
 contentLabel.TextWrapped = true
 
--- Player Features Elements
+-- Player Features Frame
 playerFrame.Parent = contentFrame
-playerFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+playerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 playerFrame.BorderSizePixel = 0
-playerFrame.Position = UDim2.new(0, 0, 0, 0)
-playerFrame.Size = UDim2.new(1, 0, 1, 0)  -- Fill the content area
+playerFrame.Position = UDim2.new(0, 0, 0, 30)
+playerFrame.Size = UDim2.new(1, 0, 1, -30)
+playerFrame.Visible = false
 
--- Infinite Jump Toggle
-infiniteJumpToggle.Parent = playerFrame
-infiniteJumpToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-infiniteJumpToggle.Position = UDim2.new(0, 10, 0, 10)
-infiniteJumpToggle.Size = UDim2.new(0.5, -20, 0, 30)
-infiniteJumpToggle.Font = Enum.Font.SourceSans
-infiniteJumpToggle.Text = "Infinite Jump"
-infiniteJumpToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteJumpToggle.TextSize = 18
-
--- Noclip Toggle
+noclipToggle.Name = "NoclipToggle"
 noclipToggle.Parent = playerFrame
-noclipToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-noclipToggle.Position = UDim2.new(0.5, 10, 0, 10)
-noclipToggle.Size = UDim2.new(0.5, -20, 0, 30)
+noclipToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+noclipToggle.Position = UDim2.new(0.25, 0, 0, 50)
+noclipToggle.Size = UDim2.new(0.5, 0, 0, 30)
 noclipToggle.Font = Enum.Font.SourceSans
-noclipToggle.Text = "Noclip"
+noclipToggle.Text = "Toggle Noclip"
 noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 noclipToggle.TextSize = 18
 
--- Flying Toggle
+flyingToggle.Name = "FlyingToggle"
 flyingToggle.Parent = playerFrame
-flyingToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-flyingToggle.Position = UDim2.new(0, 10, 0, 50)
-flyingToggle.Size = UDim2.new(0.5, -20, 0, 30)
+flyingToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+flyingToggle.Position = UDim2.new(0.25, 0, 0, 100)
+flyingToggle.Size = UDim2.new(0.5, 0, 0, 30)
 flyingToggle.Font = Enum.Font.SourceSans
-flyingToggle.Text = "Flying"
+flyingToggle.Text = "Toggle Flying"
 flyingToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyingToggle.TextSize = 18
 
--- Speed Toggle
-speedToggle.Parent = playerFrame
-speedToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-speedToggle.Position = UDim2.new(0.5, 10, 0, 50)
-speedToggle.Size = UDim2.new(0.5, -20, 0, 30)
-speedToggle.Font = Enum.Font.SourceSans
-speedToggle.Text = "Speed"
-speedToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-speedToggle.TextSize = 18
+infJumpToggle.Name = "InfJumpToggle"
+infJumpToggle.Parent = playerFrame
+infJumpToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+infJumpToggle.Position = UDim2.new(0.25, 0, 0, 150)
+infJumpToggle.Size = UDim2.new(0.5, 0, 0, 30)
+infJumpToggle.Font = Enum.Font.SourceSans
+infJumpToggle.Text = "Toggle Infinite Jump"
+infJumpToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+infJumpToggle.TextSize = 18
 
--- Input Fields for Features
-flyingSpeedInput.Parent = playerFrame
-flyingSpeedInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-flyingSpeedInput.Position = UDim2.new(0, 10, 0, 90)
-flyingSpeedInput.Size = UDim2.new(0.5, -20, 0, 30)
-flyingSpeedInput.Font = Enum.Font.SourceSans
-flyingSpeedInput.PlaceholderText = "Flying Speed"
-flyingSpeedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-flyingSpeedInput.TextSize = 18
-
+speedInput.Name = "SpeedInput"
 speedInput.Parent = playerFrame
-speedInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-speedInput.Position = UDim2.new(0.5, 10, 0, 90)
-speedInput.Size = UDim2.new(0.5, -20, 0, 30)
+speedInput.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+speedInput.Position = UDim2.new(0.25, 0, 0, 200)
+speedInput.Size = UDim2.new(0.5, 0, 0, 30)
+speedInput.PlaceholderText = "Enter speed"
 speedInput.Font = Enum.Font.SourceSans
-speedInput.PlaceholderText = "Speed Multiplier"
 speedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 speedInput.TextSize = 18
 
-infiniteJumpInput.Parent = playerFrame
-infiniteJumpInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-infiniteJumpInput.Position = UDim2.new(0, 10, 0, 130)
-infiniteJumpInput.Size = UDim2.new(0.5, -20, 0, 30)
-infiniteJumpInput.Font = Enum.Font.SourceSans
-infiniteJumpInput.PlaceholderText = "Infinite Jump Height"
-infiniteJumpInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteJumpInput.TextSize = 18
+-- Visuals Frame
+visualsFrame.Parent = contentFrame
+visualsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+visualsFrame.BorderSizePixel = 0
+visualsFrame.Position = UDim2.new(0, 0, 0, 30)
+visualsFrame.Size = UDim2.new(1, 0, 1, -30)
+visualsFrame.Visible = false
 
-noclipInput.Parent = playerFrame
-noclipInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-noclipInput.Position = UDim2.new(0.5, 10, 0, 130)
-noclipInput.Size = UDim2.new(0.5, -20, 0, 30)
-noclipInput.Font = Enum.Font.SourceSans
-noclipInput.PlaceholderText = "Noclip Speed"
-noclipInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipInput.TextSize = 18
+boxesToggle.Name = "BoxesToggle"
+boxesToggle.Parent = visualsFrame
+boxesToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+boxesToggle.Position = UDim2.new(0.25, 0, 0, 50)
+boxesToggle.Size = UDim2.new(0.5, 0, 0, 30)
+boxesToggle.Font = Enum.Font.SourceSans
+boxesToggle.Text = "Toggle Boxes"
+boxesToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+boxesToggle.TextSize = 18
 
--- Functions to handle tab switching
-local function changeContent(text)
-    contentLabel.Text = text
+healthToggle.Name = "HealthToggle"
+healthToggle.Parent = visualsFrame
+healthToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+healthToggle.Position = UDim2.new(0.25, 0, 0, 100)
+healthToggle.Size = UDim2.new(0.5, 0, 0, 30)
+healthToggle.Font = Enum.Font.SourceSans
+healthToggle.Text = "Toggle Health"
+healthToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+healthToggle.TextSize = 18
+
+nameToggle.Name = "NameToggle"
+nameToggle.Parent = visualsFrame
+nameToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+nameToggle.Position = UDim2.new(0.25, 0, 0, 150)
+nameToggle.Size = UDim2.new(0.5, 0, 0, 30)
+nameToggle.Font = Enum.Font.SourceSans
+nameToggle.Text = "Toggle Name"
+nameToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+nameToggle.TextSize = 18
+
+skeletonToggle.Name = "SkeletonToggle"
+skeletonToggle.Parent = visualsFrame
+skeletonToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+skeletonToggle.Position = UDim2.new(0.25, 0, 0, 200)
+skeletonToggle.Size = UDim2.new(0.5, 0, 0, 30)
+skeletonToggle.Font = Enum.Font.SourceSans
+skeletonToggle.Text = "Toggle Skeleton"
+skeletonToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+skeletonToggle.TextSize = 18
+
+-- Aimbot Frame
+aimbotFrame.Parent = contentFrame
+aimbotFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+aimbotFrame.BorderSizePixel = 0
+aimbotFrame.Position = UDim2.new(0, 0, 0, 30)
+aimbotFrame.Size = UDim2.new(1, 0, 1, -30)
+aimbotFrame.Visible = false
+
+aimbotToggle.Name = "AimbotToggle"
+aimbotToggle.Parent = aimbotFrame
+aimbotToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+aimbotToggle.Position = UDim2.new(0.25, 0, 0, 50)
+aimbotToggle.Size = UDim2.new(0.5, 0, 0, 30)
+aimbotToggle.Font = Enum.Font.SourceSans
+aimbotToggle.Text = "Toggle Aimbot"
+aimbotToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+aimbotToggle.TextSize = 18
+
+-- Functions to change content when tab is clicked
+local function showPlayerTab()
+    playerFrame.Visible = true
+    visualsFrame.Visible = false
+    aimbotFrame.Visible = false
+    contentLabel.Text = "Player features"
 end
 
-LeftPaimbotTab.MouseButton1Click:Connect(function()
-    changeContent("This is the Left Paimbot tab!")
-end)
+local function showVisualsTab()
+    playerFrame.Visible = false
+    visualsFrame.Visible = true
+    aimbotFrame.Visible = false
+    contentLabel.Text = "Visual features"
+end
 
-PlayerTab.MouseButton1Click:Connect(function()
-    changeContent("Player features options:")
-    playerFrame.Visible = true  -- Show the player features options when the tab is clicked
-end)
+local function showAimbotTab()
+    playerFrame.Visible = false
+    visualsFrame.Visible = false
+    aimbotFrame.Visible = true
+    contentLabel.Text = "Aimbot features"
+end
 
-VisualsTab.MouseButton1Click:Connect(function()
-    changeContent("Visuals options:")
-end)
-
-ExtrasTab.MouseButton1Click:Connect(function()
-    changeContent("This is the Extras tab!")
-end)
-
--- Placeholder for future toggle functionality
--- For now, we don't add any actual logic to these toggles.
+-- Tab button clicks
+PlayerTab.MouseButton1Click:Connect(showPlayerTab)
+VisualsTab.MouseButton1Click:Connect(showVisualsTab)
+LeftPaimbotTab.MouseButton1Click:Connect(showAimbotTab)
